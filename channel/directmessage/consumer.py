@@ -1,6 +1,8 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from channels.auth import channel_session_user_from_http
+from channels import Group
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -44,3 +46,11 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': message
         }))
+
+
+
+# add that user into a a group just for them
+@channel_session_user_from_http
+def ws_connect(message):
+    if user.is_authenticated:
+        Group("user-{}".format(user.id)).add(message.reply_channel)
