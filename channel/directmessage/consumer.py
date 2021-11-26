@@ -3,6 +3,8 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from channels.auth import channel_session_user_from_http
 from channels import Group
+from asgiref.sync import async_to_sync
+from channels.auth import login
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -29,6 +31,9 @@ class ChatConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
 
+        async_to_sync(login)(self.scope, user)
+        self.scope["session"].save()
+
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
@@ -46,7 +51,6 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': message
         }))
-
 
 
 # add that user into a a group just for them
