@@ -1,6 +1,3 @@
-from django.test import TestCase
-
-# Create your tests here.
 from channels.testing import ChannelsLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
@@ -69,7 +66,7 @@ class ChatTests(ChannelsLiveServerTestCase):
     # === Utility ===
 
     def _enter_chat_room(self, room_name):
-        self.driver.get(self.live_server_url + '/chat/')
+        self.driver.get(self.live_server_url + '/directmessage/')
         ActionChains(self.driver).send_keys(room_name + '\n').perform()
         WebDriverWait(self.driver, 2).until(lambda _:
             room_name in self.driver.current_url)
